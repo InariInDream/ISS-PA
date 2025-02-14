@@ -1,0 +1,21 @@
+<launch>
+  <!-- 启动Gazebo仿真，并加载指定的世界文件 -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find robot_gazebo)/worlds/simple_road.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <!-- 确保use_sim_time启用 -->
+  <param name="use_sim_time" value="true"/>
+
+  <!-- 包含spawn_models.launch以加载自定义模型 -->
+  <include file="$(find robot_gazebo)/launch/spawn_models.launch"/>
+
+  <!-- 启动控制节点 -->
+  <node name="control_robot" pkg="robot_gazebo" type="control_robot.py" output="screen"/>
+</launch>
+

@@ -1,0 +1,16 @@
+<launch>
+  <!-- 插入自定义模型：Hatchback -->
+  <node name="spawn_hatchback" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-file $(find robot_gazebo)/models/hatchback/model.sdf
+              -sdf
+              -model hatchback
+              -x 1 -y 0 -z 0.1"/>
+
+  <!-- 插入自定义模型：ISCAS_building -->
+  <node name="spawn_iscas_building" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-file $(find robot_gazebo)/models/ISCAS_building/model.sdf
+              -sdf
+              -model ISCAS_building
+              -x 0 -y 0 -z 0"/>
+</launch>
+

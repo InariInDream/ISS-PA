@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="$(arg robot_name)"
+  xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="M_PI" value="3.141592653589793" />
+  <xacro:property name="rotation_fiction" value="1"/>
+  <xacro:property name="mu" value="9999999999.0"/>
+
+  <xacro:include filename="$(find robot_gazebo)/urdf/pav_s00/macros.xacro" />
+  <xacro:include filename="$(find robot_gazebo)/urdf/pav_s00/pav_s00.gazebo" />
+  <link name="base_footprint"/>
+
+  <link name="base_link">
+    <inertial>
+      <origin xyz="-0.02 0 0" rpy="0 0 0" />
+      <mass value="4" />
+      <inertia ixx="0.00621" ixy="0" ixz="0" iyy="0.04224" iyz="0" izz="0.04563" />
+    </inertial>
+    <visual>
+      <origin xyz="-0.024 0 -0.067" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robot_gazebo/models/robots/pav_s01/base_link.STL" />
+      </geometry>
+      <!-- <origin xyz="-0.02 0 -0.0325" rpy="0 0 0" />
+      <geometry>
+        <box size="0.35 0.12 0.065" />
+      </geometry> -->
+      <material name="">
+        <color rgba="0 0.62745 0.23529 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="-0.02 0 -0.0325" rpy="0 0 0" />
+      <geometry>
+        <box size="0.35 0.12 0.065" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0.0 0.0 0.09" rpy="0 0 0"/>
+  </joint>
+
+  <link name="shell_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="${M_PI/2} 0 -${M_PI/2}" />
+      <geometry>
+        <mesh filename="package://robot_gazebo/models/robots/pav_s00/shell_pav_s00.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <joint name="shell_link_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="shell_link"/>
+    <origin xyz="-0.02 0.0 -0.085" rpy="0 0 0"/>
+  </joint>
+
+
+  <link name="right_rear_wheel_link">
+    <inertial>
+      <origin xyz="0 0 0 " rpy="0 0 0" />
+      <mass value="2" />
+      <inertia ixx="6.79E-04" ixy="0" ixz="0" iyy="6.79E-04" iyz="0" izz="1.25E-03" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robot_gazebo/models/robots/pav_s00/wheel_link.STL" />
+      </geometry>
+      <!-- <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+        <cylinder radius="0.035" length="0.02" />
+      </geometry> -->
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+        <cylinder radius="0.035" length="0.02" />
+      </geometry>
+    </collision>
+    <xacro:wheel_friction name="${mu}" />
+  </link>
+
+  <joint name="right_rear_wheel_link_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="right_rear_wheel_link" />
+    <origin xyz="-0.139 -0.09 -0.055" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit effort="10" velocity="1000" />
+  </joint>
+  <!-- <xacro:wheel_transmission name="right_rear_wheel_link" /> -->
+
+  <link name="left_rear_wheel_link">
+    <inertial>
+      <origin xyz="0 0 0 " rpy="0 0 0" />
+      <mass value="2" />
+      <inertia ixx="6.79E-04" ixy="0" ixz="0" iyy="6.79E-04" iyz="0" izz="1.25E-03" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+      <geometry>
+        <mesh filename="package://robot_gazebo/models/robots/pav_s00/wheel_link.STL" />
+      </geometry>
+      <!-- <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+        <cylinder radius="0.035" length="0.02" />
+      </geometry> -->
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+        <cylinder radius="0.035" length="0.02" />
+      </geometry>
+    </collision>
+    <xacro:wheel_friction name="${mu}" />
+  </link>
+
+  <joint name="left_rear_wheel_link_joint" type="continuous">
+    <parent link="base_link" />
+    <child link="left_rear_wheel_link" />
+    <origin xyz="-0.139 0.09 -0.055" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit effort="10" velocity="1000" />
+    <dynamics damping="0.0" friction="${rotation_fiction}"/>
+  </joint>
+  <!-- <xacro:wheel_transmission name="left_rear_wheel_link" /> -->
+
+  <link name="left_front_steer_hinge_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.5" />
+      <inertia ixx="1.35E-05" ixy="0" ixz="0" iyy="1.35E-05" iyz="0" izz="2.5E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.01" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robot_gazebo/models/robots/pav_s00/steer_hinge_link.STL" />
+      </geometry>
+      <!-- <origin xyz="0.0 0.0 0.0" rpy="${M_PI/2} 0.0 0.0" />
+      <geometry>
+          <cylinder radius="0.01" length="0.005" />
+      </geometry> -->
+      <material name="">
+        <color rgba="0.082353 0.56078 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <!-- <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.004" length="0.01" />
+      </geometry> -->
+      <geometry>
+        <cylinder radius="0.01" length="0.005" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="${M_PI/2} 0.0 0.0" />
+    </collision>
+  </link>
+
+  <joint name="left_front_steer_hinge_link_joint" type="revolute">
+    <origin xyz="0.095 0.065 -0.0525" rpy="0 0 0" />
+    <parent link="base_link" />
+    <child link="left_front_steer_hinge_link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.5" upper="0.5" effort="5" velocity="1000" />
+  </joint>
+  <xacro:steering_hinge_transmission name="left_front_steer_hinge_link" />
+
+
+
+  <link name="right_front_steer_hinge_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.5" />
+      <inertia ixx="1.35E-05" ixy="0" ixz="0" iyy="1.35E-05" iyz="0" izz="2.5E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0.01" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robot_gazebo/models/robots/pav_s00/steer_hinge_link.STL" />
+      </geometry>
+      <!-- <origin xyz="0.0 0.0 0.0" rpy="${M_PI/2} 0.0 0.0" />
+      <geometry>
+          <cylinder radius="0.01" length="0.005" />
+      </geometry> -->
+      <material name="">
+        <color rgba="0.082353 0.56078 0 1" />
+      </material>
+    </visual>
+    <!-- <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <cylinder radius="0.004" length="0.01" />
+      </geometry>
+    </collision> -->
+    <collision>
+      <geometry>
+        <cylinder radius="0.01" length="0.005" />
+      </geometry>
+      <origin xyz="0.0 0.0 0.0" rpy="${M_PI/2} 0.0 0.0" />
+    </collision>
+  </link>
+
+  <joint name="right_front_steer_hinge_link_joint" type="revolute">
+    <parent link="base_link" />
+    <child link="right_front_steer_hinge_link" />
+    <origin xyz="0.095 -0.065 -0.0525" rpy="0 0 0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-0.5" upper="0.5" effort="5" velocity="1000" />
+  </joint>
+  <xacro:steering_hinge_transmission name="right_front_steer_hinge_link" />
+
+
+  <link name="right_front_wheel_link">
+    <inertial>
+      <origin xyz="0 0 0 " rpy="0 0 0" />
+      <mass value="2" />
+      <inertia ixx="6.79E-04" ixy="0" ixz="0" iyy="6.79E-04" iyz="0" izz="1.25E-03" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robot_gazebo/models/robots/pav_s00/wheel_link.STL" />
+      </geometry>
+      <!-- <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+        <cylinder radius="0.035" length="0.02" />
+      </geometry> -->
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+        <cylinder radius="0.035" length="0.02" />
+      </geometry>
+    </collision>
+    <xacro:wheel_friction name="${mu}" />
+  </link>
+
+  <joint name="right_front_wheel_link_joint" type="continuous">
+    <parent link="right_front_steer_hinge_link" />
+    <child link="right_front_wheel_link" />
+    <origin xyz="0 -0.025 0" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <limit effort="10" velocity="1000" />
+    <dynamics damping="0.0" friction="${rotation_fiction}"/>
+  </joint>
+  <xacro:wheel_transmission name="right_front_wheel_link" />
+
+  <link name="left_front_wheel_link">
+    <inertial>
+      <origin xyz="0 0 0 " rpy="0 0 0" />
+      <mass value="2" />
+      <inertia ixx="6.79E-04" ixy="0" ixz="0" iyy="6.79E-04" iyz="0" izz="1.25E-03" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+      <geometry>
+        <mesh filename="package://robot_gazebo/models/robots/pav_s00/wheel_link.STL" />
+      </geometry>
+      <!-- <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+        <cylinder radius="0.035" length="0.02" />
+      </geometry> -->
+      <material name="">
+        <color rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+      <geometry>
+        <cylinder radius="0.035" length="0.02" />
+      </geometry>
+    </collision>
+    <xacro:wheel_friction name="${mu}" />
+  </link>
+
+  <joint name="left_front_wheel_link_joint" type="continuous">
+    <parent link="left_front_steer_hinge_link" />
+    <child link="left_front_wheel_link" />
+    <origin xyz="0 0.025 0" rpy="0 0 0" />
+    <axis xyz="0 1 0" />
+    <!-- <limit effort="10" velocity="1000" />
+    <dynamics damping="0.0" friction="${rotation_fiction}"/> -->
+  </joint>
+  <xacro:wheel_transmission name="left_front_wheel_link" />
+
+  <link name="camera">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="0.22414" />
+      <inertia ixx="0.00039172" ixy="2.2482E-08" ixz="4.3677E-08" iyy="4.6625E-05" iyz="1.3858E-10" izz="0.0004106" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robot_gazebo/models/robots/pav_s00/camera.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="0.082353 0.082353 0.082353 1" />
+      </material>
+    </visual>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="camera" />
+    <origin xyz="0.077 0 0.046" rpy="0 0 0" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <link name="depth_camera"/>
+  <joint name="depth_camera_joint" type="fixed">
+    <parent link="camera" />
+    <child link="depth_camera" />
+    <origin xyz="0 0 0" rpy="-${M_PI/2} 0 -${M_PI/2}" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+  <xacro:arg name="gpu" default="false"/>
+  <xacro:property name="gpu" value="$(arg gpu)" />
+  <xacro:include filename="$(find robot_gazebo)/urdf/pav_s00/pav_s00_VLP-16.urdf.xacro"/>
+  <xacro:VLP-16 parent="base_link" name="velodyne" topic="/velodyne_points" hz="10" samples="440" gpu="${gpu}">
+    <origin xyz="-0.022 0 0.1" rpy="0 0 0" />
+  </xacro:VLP-16>
+
+  <link name="imu">
+    <visual>
+      <geometry>
+        <box size="0.01 0.01 0.005"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <material name="black">
+        <color rgba="0.0 0.0 0.0 1.0" />
+      </material>
+    </visual>
+  </link>
+
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link" />
+    <child link="imu" />
+    <origin xyz="-0.10 0 0.01" />
+    <axis xyz="0 0 1" />
+  </joint>
+
+  <!-- Gazebo references -->
+<!-- 
+  <gazebo reference="$base_link">
+    <mu1 value="${mu}"/>
+    <mu2 value="${mu}"/>
+    <kp value="10000000.0" />
+    <kd value="1.0" />
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="$shell_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+  <gazebo reference="$left_front_wheel_link">
+    <mu1 value="${mu}"/>
+    <mu2 value="${mu}"/>
+    <kp value="10000000.0" />
+    <kd value="1.0" />
+    <fdir1 value="1 0 0"/>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="$right_front_wheel_link">
+    <mu1 value="${mu}"/>
+    <mu2 value="${mu}"/>
+    <kp value="10000000.0" />
+    <kd value="1.0" />
+    <fdir1 value="1 0 0"/>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="$left_rear_wheel_link">
+    <mu1 value="${mu}"/>
+    <mu2 value="${mu}"/>
+    <kp value="10000000.0" />
+    <kd value="1.0" />
+    <fdir1 value="1 0 0"/>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="$right_rear_wheel_link">
+    <mu1 value="${mu}"/>
+    <mu2 value="${mu}"/>
+    <kp value="10000000.0" />
+    <kd value="1.0" />
+    <fdir1 value="1 0 0"/>
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="$lidar_2d">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <gazebo reference="$camera">
+    <material>Gazebo/Grey</material>
+  </gazebo> -->
+
+    <!-- Gazebo Plugins -->
+  <!-- <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_diff_drive.so">
+      <robotNamespace>$(arg robot_name)</robotNamespace>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <odometrySource>world</odometrySource>
+      <publishOdomTF>true</publishOdomTF>
+      <robotBaseFrame>base_footprint</robotBaseFrame>
+      <publishTf>true</publishTf>
+      <publishWheelJointState>true</publishWheelJointState>
+      <update_rate>30</update_rate>
+      <leftJoint>left_rear_wheel_joint</leftJoint>
+      <rightJoint>right_rear_wheel_joint</rightJoint>
+      <wheelSeparation>0.28</wheelSeparation>
+      <wheelDiameter>0.07</wheelDiameter>
+      <wheelAcceleration>10</wheelAcceleration>
+      <wheelTorque>10</wheelTorque>
+      <rosDebugLevel>debug</rosDebugLevel>
+      <robotParam>robot_description</robotParam>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      <legacyModeNS>true</legacyModeNS>
+    </plugin>
+  </gazebo> -->
+
+  <!-- <gazebo reference="$camera">
+    <sensor type="depth" name="camera">
+      <always_on>true</always_on>
+      <update_rate>20.0</update_rate>
+      <camera>
+        <horizontal_fov>${60.0*3.14/180.0}</horizontal_fov>
+        <image>
+          <format>R8G8B8</format>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>8.0</far>
+        </clip>
+      </camera>
+      <plugin name="kinect_real_sense_controller" filename="libgazebo_ros_openni_kinect.so">
+        <cameraName>depth_camera</cameraName>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>10</updateRate>
+        <imageTopicName>rgb/image_raw</imageTopicName>
+        <depthImageTopicName>depth/image_raw</depthImageTopicName>
+        <pointCloudTopicName>depth/points</pointCloudTopicName>
+        <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+        <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+        <frameName>$depth_camera</frameName>
+        <baseline>0.1</baseline>
+        <distortion_k1>0.0</distortion_k1>
+        <distortion_k2>0.0</distortion_k2>
+        <distortion_k3>0.0</distortion_k3>
+        <distortion_t1>0.0</distortion_t1>
+        <distortion_t2>0.0</distortion_t2>
+        <pointCloudCutoff>0.4</pointCloudCutoff>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="$imu">
+    <gravity>true</gravity>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <topic>__default_topic__</topic>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <topicName>imu</topicName>
+        <bodyName>imu</bodyName>
+        <updateRateHZ>100.0</updateRateHZ>
+        <gaussianNoise>0.0</gaussianNoise>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <frameName>$imu</frameName>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
+
+  <xacro:include filename="$(find robot_gazebo)/urdf/pav_s00/pav_s00.gazebo" /> -->
+
+</robot>

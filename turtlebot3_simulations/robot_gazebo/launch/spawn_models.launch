@@ -1,0 +1,86 @@
+<launch>
+  <!-- 启动 Gazebo 仿真，并加载指定的世界文件 -->
+  <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch"> -->
+    <!-- <arg name="world_name" value="$(find r????l_line_following)/models/your_world.world"/> 替换为您的世界文件路径 -->
+    <!-- <arg name="paused" value="false"/> -->
+    <!-- <arg name="use_sim_time" value="true"/> -->
+    <!-- <arg name="gui" value="true"/> -->
+    <!-- <arg name="headless" value="false"/> -->
+    <!-- <arg name="debug" value="false"/> -->
+  <!-- </include> -->
+
+  <!-- 确保 use_sim_time 启用 -->
+  <!-- <param name="use_sim_time" value="true"/> -->
+
+  <!-- 插入自定义模型：PAV_S系列小车，使用命名空间 robot1 -->
+  <!-- <group ns="robot1"> -->
+    <param name="robot_description" command="$(find xacro)/xacro $(find robot_gazebo)/urdf/pav_s00/pav_s00.xacro robot_name:=pav_s00"/>
+
+    <node name="spawn_pav_s00" pkg="gazebo_ros" type="spawn_model" output="screen"
+          args="-param robot_description
+                -urdf
+                -model pav_s00
+                -x 0
+                -y 0
+                -z 0.1
+                -Y 0
+                "/> 
+  <!-- </group> -->
+
+  <node name="controller_manager" pkg="controller_manager" type="spawner" args="controller_manager"/>
+  
+  <node name="diff_drive_controller_spawner" pkg="controller_manager" type="spawner" args="diff_drive_controller"/>
+  
+  <node name="joint_state_controller_spawner" pkg="controller_manager" type="spawner" args="joint_state_controller"/>
+
+  <!-- Load gazebo_ros_control plugin -->
+  <!-- <node name="gazebo_ros_control" pkg="gazebo_ros" type="gazebo_ros_control" /> -->
+
+  <!-- 插入自定义模型：线条 -->
+  <node name="spawn_line" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-file /home/inariindream/catkin_ws/src/turtlebot3_simulations/robot_gazebo/models/line/model.sdf
+              -sdf
+              -model line1
+              -x 14
+              -y -0.8
+              -z 0.1
+              -Y 0"/>
+
+  <!-- 插入第二条线（如果需要） -->
+  <node name="spawn_line2" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-file /home/inariindream/catkin_ws/src/turtlebot3_simulations/robot_gazebo/models/line/model.sdf
+              -sdf
+              -model line2
+              -x 14
+              -y 0.8
+              -z 0.1
+              -Y 0"/>
+
+
+    <!-- 启动小车控制节点 -->
+    <!-- 启动 teleop_twist_keyboard -->
+  <!-- <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="keyboard_teleop" output="screen">
+    <param name="cmd_vel_topic" value="/cmd_vel"/>
+  </node> -->
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" args="prismatic_x_controller prismatic_z_controller" />
+
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
+
+  <!-- 启动 ROS 控制器节点 -->
+  <!-- <node name="robot_control" pkg="gazebo_ros_control" type="gazebo_ros_control" /> -->
+
+  <!-- <node name="cmd_vel_listener" pkg="robot_gazebo" type="teleop_twist_keyboard.py" output="screen"/> -->
+
+
+
+  <!-- 插入障碍物 -->
+  <!-- <node name="spawn_obstacle" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-file ~/catkin_ws/src/rl_line_following/models/obstacle/model.sdf
+              -sdf
+              -model obstacle1
+              -x 5
+              -y 2
+              -z 0.05"/> -->
+</launch>

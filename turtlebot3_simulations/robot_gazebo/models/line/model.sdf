@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="line">
+    <!-- 移除 static 标签，使模型可移动 -->
+    <static>false</static>
+    
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>30 0.1 0.2</size> <!-- 长度，宽度，高度 -->
+          </box>
+        </geometry>
+        <material>
+          <ambient>1 0 0 1</ambient> <!-- 红色 -->
+          <diffuse>1 0 0 1</diffuse>
+        </material>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>30 0.1 0.2</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+
+    <!-- 添加关节 -->
+    <joint name="x_translation_joint" type="prismatic">
+      <parent>world</parent>
+      <child>link</child>
+      <pose>0 0 0 0 0 0</pose> <!-- 起始位置 -->
+      <axis>
+        <xyz>1 0 0</xyz> <!-- 沿着 X 轴平移 -->
+      </axis>
+      <limit>
+        <lower>-5</lower> <!-- 允许平移的最小值 -->
+        <upper>5</upper>  <!-- 允许平移的最大值 -->
+        <effort>10</effort> <!-- 最大力矩 -->
+        <velocity>1</velocity> <!-- 最大速度 -->
+      </limit>
+    </joint>
+
+    <joint name="z_translation_joint" type="prismatic">
+      <parent>world</parent>
+      <child>link</child>
+      <pose>0 0 0 0 0 0</pose> <!-- 起始位置 -->
+      <axis>
+        <xyz>0 0 1</xyz> <!-- 沿着 Z 轴平移 -->
+      </axis>
+      <limit>
+        <lower>-5</lower> <!-- 允许平移的最小值 -->
+        <upper>5</upper>  <!-- 允许平移的最大值 -->
+        <effort>10</effort> <!-- 最大力矩 -->
+        <velocity>1</velocity> <!-- 最大速度 -->
+      </limit>
+    </joint>
+  </model>
+</sdf>
+
+
+<!-- <?xml version="1.0"?> -->
+<!-- <sdf version="1.6"> -->
+  <!-- <model name="line"> -->
+    <!-- <static>true</static> -->
+    <!-- <link name="link"> -->
+      <!-- <visual name="visual"> -->
+        <!-- <geometry> -->
+          <!-- <box> -->
+            <!-- <size>10 0.1 0.05</size> 长度，宽度，高度 -->
+          <!-- </box> -->
+        <!-- </geometry> -->
+        <!-- <material> -->
+          <!-- <ambient>1 0 0 1</ambient> 红色 -->
+          <!-- <diffuse>1 0 0 1</diffuse> -->
+        <!-- </material> -->
+      <!-- </visual> -->
+      <!-- <collision name="collision"> -->
+        <!-- <geometry> -->
+          <!-- <box> -->
+            <!-- <size>10 0.1 0.05</size> -->
+          <!-- </box> -->
+        <!-- </geometry> -->
+      <!-- </collision> -->
+    <!-- </link> -->
+  <!-- </model> -->
+<!-- </sdf> -->
+

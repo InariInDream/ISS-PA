@@ -1,0 +1,10 @@
+<launch>
+    <!-- 启动控制节点 -->
+      <!-- 启动 ROS 控制器节点 -->
+  <!-- <node name="robot_control" pkg="gazebo_ros_control" type="gazebo_ros_control" /> -->
+    <node name="controller_manager" pkg="controller_manager" type="spawner" args="controller_manager"/>
+  <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="keyboard_teleop" output="screen">
+    <param name="cmd_vel_topic" value="/cmd_vel"/>
+  </node>
+
+</launch>

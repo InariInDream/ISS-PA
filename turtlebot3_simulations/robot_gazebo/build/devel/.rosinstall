@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/inariindream/catkin_ws/src/turtlebot3_simulations/turtlebot3_gazebo/build/devel/setup.sh

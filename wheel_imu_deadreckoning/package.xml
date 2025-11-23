@@ -1,0 +1,20 @@
+<package format="2">
+  <name>wheel_imu_deadreckoning</name>
+  <version>0.0.1</version>
+  <description>ROS package for wheel encoder + IMU dead reckoning</description>
+  
+  <maintainer email="your_email@example.com">YourName</maintainer>
+  <license>MIT</license>
+
+  <!-- 需要用到 rospy，所以至少要有以下依赖 -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>rospy</build_depend>
+  <exec_depend>rospy</exec_depend>
+
+  <!-- 如果要发布里程计等，可依赖以下 -->
+  <build_depend>nav_msgs</build_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+
+</package>

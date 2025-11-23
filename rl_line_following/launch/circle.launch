@@ -1,0 +1,8 @@
+<launch>
+    <!-- 启动Gazebo和您的机器人模型 -->
+    <include file="$(find robot_gazebo)/launch/gazebo_demo.launch" />
+
+    <!-- 启动自定义RL环境节点 -->
+    <node pkg="rl_line_following" type="circles.py" name="circle" output="screen" />
+</launch>
+

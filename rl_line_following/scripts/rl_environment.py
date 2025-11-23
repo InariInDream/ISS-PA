@@ -145,10 +145,10 @@ class LineFollowingEnv(gym.Env):
             rospy.loginfo(f"Termination condition met: {termination_reason}")
         
         # 增量保存坐标到文件
-        if len(self.coordinates) > 0:
-            x_position = self.coordinates[-1][0]  # 小车当前的 x 坐标
-            if x_position >= 10:
-                self.save_coordinates_to_file()
+        # if len(self.coordinates) > 0:
+        #     x_position = self.coordinates[-1][0]  # 小车当前的 x 坐标
+        #     if x_position >= 10:
+        #         self.save_coordinates_to_file()
 
         # 调试信息
         # rospy.loginfo(f"Action: {action}, Reward: {reward:.3f}, Terminated: {terminated}, "

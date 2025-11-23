@@ -30,14 +30,25 @@ def main():
     new_logger = configure(folder="/tmp/gym/", format_strings=["stdout", "csv", "tensorboard"])
 
     # 创建 RL 模型，强制使用 CPU，调整学习率
-    model = DDPG('MlpPolicy', env, verbose=1, device='cpu', learning_rate=3e-4)
+    # model = DDPG('MlpPolicy', env, verbose=1, device='cpu', learning_rate=3e-4)
+    # 在 train.py 中改用 PPO 算法（更适合连续控制）
+    model = PPO(
+        'MlpPolicy',
+        env,
+        verbose=1,
+        device='cpu',
+        learning_rate=1e-4,
+        gamma=0.99,
+        n_steps=2048,
+        batch_size=64
+    )
     model.set_logger(new_logger)
 
     # 训练模型，增加训练步数
-    model.learn(total_timesteps=500000)
+    model.learn(total_timesteps=700000)
 
     # 保存模型
-    model_path = "/home/inariindream/ppo_line_following"
+    model_path = "/home/inariindream/circles1"
     model.save(model_path)
     print(f"Model saved to {model_path}")
 

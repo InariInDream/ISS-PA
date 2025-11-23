@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- 启动Gazebo和机器人模型 -->
+    <include file="$(find robot_gazebo)/launch/gazebo_demo.launch" />
+    
+    <!-- 启动Rviz -->
+    <node name="rviz" pkg="rviz" type="rviz" 
+          args="-d $(find rl_line_following)/rviz/path_following.rviz" 
+          required="true"/>
+    
+    <!-- 加载地图 -->
+    <arg name="map_file" default="$(find rl_line_following)/maps/my_map.yaml"/>
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+    
+    <!-- 发布静态坐标系转换 -->
+    <node pkg="tf" type="static_transform_publisher" name="map_to_odom"
+          args="0 0 0 0 0 0 map odom 100" />
+    
+    <!-- 启动路径规划器 -->
+    <node pkg="rl_line_following" type="rviz_path_planner.py" 
+          name="rviz_path_planner" output="screen"/>
+    
+    <!-- 启动路径跟踪器 -->
+    <node pkg="rl_line_following" type="path_tracker.py" 
+          name="path_tracker" output="screen"/>
+    
+    <!-- 启动摄像头查看器（在OpenCV窗口中显示） -->
+    <node pkg="rl_line_following" type="camera_viewer.py" 
+          name="camera_viewer" output="screen">
+        <remap from="/depth_camera/rgb/image_raw" to="/depth_camera/rgb/image_raw"/>
+        <remap from="/depth_camera/depth/image_raw" to="/depth_camera/depth/image_raw"/>
+    </node>
+    
+    <!-- 设置日志级别，减少摄像头日志刷屏 -->
+    <env name="ROSCONSOLE_CONFIG_FILE" 
+         value="$(find rl_line_following)/config/rosconsole.conf"/>
+    
+</launch>
+

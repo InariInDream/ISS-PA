@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- 启动Gazebo和机器人模型 -->
+    <include file="$(find robot_gazebo)/launch/gazebo_demo.launch" />
+    
+    <!-- 启动Rviz -->
+    <node name="rviz" pkg="rviz" type="rviz" 
+          args="-d $(find rl_line_following)/rviz/path_following.rviz" 
+          required="true"/>
+    
+    <!-- 发布静态坐标系转换 -->
+    <node pkg="tf" type="static_transform_publisher" name="map_to_odom"
+          args="0 0 0 0 0 0 map odom 100" />
+    
+    <!-- 启动路径规划器 -->
+    <node pkg="rl_line_following" type="rviz_path_planner.py" 
+          name="rviz_path_planner" output="screen"/>
+    
+    <!-- 启动路径跟踪器 -->
+    <node pkg="rl_line_following" type="path_tracker.py" 
+          name="path_tracker" output="screen"/>
+    
+    <!-- 启动摄像头查看器 -->
+    <node pkg="rl_line_following" type="camera_viewer.py" 
+          name="camera_viewer" output="screen"/>
+    
+</launch>
+

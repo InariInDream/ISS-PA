@@ -1,0 +1,15 @@
+<launch>
+    <!-- 启动Gazebo和您的机器人模型 -->
+    <!-- This is the same launch file your RL environment uses -->
+    <include file="$(find robot_gazebo)/launch/gazebo_demo.launch" />
+
+    <!-- 
+      启动键盘控制节点.
+      'launch-prefix="xterm -e"' 会在一个新的终端窗口中运行此节点.
+      这是必须的，因为它需要一个专属的终端来捕获键盘输入.
+    -->
+    <!-- <node pkg="rl_line_following" type="keyboard.py" name="keyboard_controller" output="screen"/> -->
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop_twist_keyboard" output="screen">
+      <remap from="cmd_vel" to="/cmd_vel"/>
+    </node>
+</launch>

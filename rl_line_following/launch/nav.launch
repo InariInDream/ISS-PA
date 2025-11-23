@@ -1,0 +1,49 @@
+<launch>
+    <include file="$(find robot_gazebo)/launch/gazebo_demo.launch" />
+
+    <arg name="map_file" default="$(find rl_line_following)/maps/my_map.yaml"/>
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+    
+    <!-- 添加静态TF变换，发布map到odom的变换 -->
+    <node pkg="tf" type="static_transform_publisher" name="map_to_odom" 
+          args="0 0 0 0 0 0 map odom 100" />
+
+    <node pkg="amcl" type="amcl" name="amcl" output="screen">
+        <param name="odom_frame_id" value="odom"/>
+        <param name="base_frame_id" value="base_footprint"/>
+        <param name="global_frame_id" value="map"/>
+        <!-- 修改雷达话题映射，确保使用正确的雷达数据 -->
+        <remap from="scan" to="/scan"/>
+        <!-- AMCL参数优化 -->
+        <param name="min_particles" value="500"/>
+        <param name="max_particles" value="5000"/>
+        <param name="update_min_d" value="0.1"/>
+        <param name="update_min_a" value="0.1"/>
+    </node>
+
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <rosparam file="$(find rl_line_following)/config/nav_params.yaml" command="load" />
+        <!-- 修改雷达话题映射，确保使用正确的雷达数据 -->
+        <remap from="scan" to="/scan"/>
+        <!-- 规划器配置 -->
+        <param name="base_global_planner" value="navfn/NavfnROS"/>
+        <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/>
+        <param name="planner_frequency" value="5.0"/>
+        <param name="controller_frequency" value="10.0"/>
+        <param name="planner_patience" value="5.0"/>
+        <param name="controller_patience" value="15.0"/>
+    </node>
+
+    <!-- 添加激光雷达仿真节点 -->
+    <node pkg="tf" type="static_transform_publisher" name="base_to_laser" 
+          args="0 0 0.1 0 0 0 base_footprint laser 100" />
+          
+    <!-- 添加激光雷达仿真数据发布 -->
+    <node name="laser_scan_publisher" pkg="gazebo_plugins" type="gazebo_ros_laser" output="screen">
+        <param name="frame_name" value="laser" />
+        <param name="topic_name" value="/scan" />
+    </node>
+    
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rl_line_following)/rviz/navigation.rviz" required="true"/> -->
+    <node name="rviz" pkg="rviz" type="rviz" required="true"/>
+</launch>

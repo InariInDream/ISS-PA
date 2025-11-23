@@ -1,7 +1,36 @@
 <?xml version="1.0"?>
 <sdf version="1.6">
   <model name="line">
-    <!-- 移除 static 标签，使模型可移动 -->
+    <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>20 20</size> </plane>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>20 20</size> </plane>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://line/materials/scripts</uri>
+            <uri>model://line/materials/textures</uri>
+            <name>MyMap/Image</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
+
+<!-- <?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="line">
     <static>false</static>
     
     <link name="link">
@@ -56,7 +85,7 @@
       </limit>
     </joint>
   </model>
-</sdf>
+</sdf> -->
 
 
 <!-- <?xml version="1.0"?> -->

@@ -1,0 +1,9 @@
+<launch>
+  <!-- 设定两个参数，分别为轮速文件和 IMU 文件的路径 -->
+  <param name="encoder_file" value="/home/inariindream/catkin_ws/src/wheel_imu_deadreckoning/COMPort_X_20130903_195003.txt"/>
+  <param name="imu_file" value="/home/inariindream/catkin_ws/src/wheel_imu_deadreckoning/InterSense_X_20130903_195003.txt"/>
+  
+  <!-- 启动 calc_trajectory 节点 -->
+  <node pkg="wheel_imu_deadreckoning" type="calc_trajectory.py" name="calc_trajectory" output="screen">
+  </node>
+</launch>

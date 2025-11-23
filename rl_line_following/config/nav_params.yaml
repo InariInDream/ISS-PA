@@ -1,0 +1,97 @@
+# ======================================================================
+# 优化后的导航参数文件，适用于雷达导航和路径跟踪
+# ======================================================================
+
+# --- 全局配置 (适用于全局和局部规划) ---
+# 机器人在TF树中的基础坐标系，通常是 'base_link' 或 'base_footprint'
+robot_base_frame: 'base_footprint'
+# 地图和全局路径规划使用的坐标系
+global_frame: 'map'
+
+# 变换容忍度 (秒)，如果TF变换信息延迟超过这个时间，规划会失败
+transform_tolerance: 0.5
+
+# --- 全局代价地图配置 ---
+global_costmap:
+  global_frame: map
+  robot_base_frame: base_footprint
+  update_frequency: 5.0
+  publish_frequency: 2.0
+  static_map: true
+  transform_tolerance: 0.5
+  
+# --- 局部代价地图配置 ---
+local_costmap:
+  global_frame: odom
+  robot_base_frame: base_footprint
+  update_frequency: 5.0
+  publish_frequency: 2.0
+  static_map: false
+  rolling_window: true
+  width: 3.0
+  height: 3.0
+  resolution: 0.05
+  transform_tolerance: 0.5
+
+# --- 局部规划器配置 (决定机器人如何实时运动) ---
+# 我们选用 dwa_local_planner, 一个常用的局部规划器
+base_local_planner: 'dwa_local_planner/DWAPlannerROS'
+
+DWAPlannerROS:
+  # 速度限制 (优化后的参数)
+  max_vel_x: 0.5  # X方向最大线速度 (米/秒)
+  min_vel_x: 0.0  # X方向最小线速度 (如果为负，则允许后退)
+  max_vel_trans: 0.5  # 最大平移速度
+  min_vel_trans: 0.1  # 最小平移速度
+  max_vel_theta: 1.0  # 最大旋转速度 (弧度/秒)
+  min_vel_theta: 0.2  # 最小旋转速度
+
+  # 加速度限制
+  acc_lim_x: 2.5
+  acc_lim_y: 0.0
+  acc_lim_theta: 3.2
+  
+  # 目标容忍度 (当离目标多近时算作到达)
+  xy_goal_tolerance: 0.15  # xy坐标容忍度 (米)
+  yaw_goal_tolerance: 0.25 # 偏航角容忍度 (弧度)
+  latch_xy_goal_tolerance: false
+  
+  # DWA特定参数
+  sim_time: 1.5  # 前向模拟时间
+  vx_samples: 20  # x速度采样点数
+  vy_samples: 0   # y速度采样点数 (非全向机器人为0)
+  vth_samples: 40  # 角速度采样点数
+  controller_frequency: 10.0
+  
+  # 路径评分参数
+  path_distance_bias: 32.0
+  goal_distance_bias: 24.0
+  occdist_scale: 0.01
+  forward_point_distance: 0.325
+  stop_time_buffer: 0.2
+  scaling_speed: 0.25
+  max_scaling_factor: 0.2
+
+# --- 代价地图通用配置 (障碍物处理) ---
+# 障碍物膨胀半径 (米)，设置一个比机器人半径稍大的安全距离
+inflation_radius: 0.3
+# 代价比例因子，通常不需要修改
+cost_scaling_factor: 10.0
+
+# --- 传感器来源 ---
+# 告诉代价地图从哪个话题获取传感器数据来感知障碍物
+# 这里我们只使用雷达
+observation_sources: laser_scan_sensor
+
+laser_scan_sensor: {
+  sensor_frame: laser,              # 修改为实际的雷达frame名称
+  data_type: LaserScan,             # 数据类型
+  topic: /scan,                     # 雷达数据的话题名称
+  marking: true,                    # 是否用此传感器数据来标记障碍物
+  clearing: true,                   # 是否用此传感器数据来清除障碍物
+  max_obstacle_height: 2.0,         # 最大障碍物高度
+  min_obstacle_height: 0.0,         # 最小障碍物高度
+  observation_persistence: 0.0,     # 观测持久性
+  expected_update_rate: 0.0,        # 预期更新率
+  inf_is_valid: false               # 无穷大值是否有效
+}

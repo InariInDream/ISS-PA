@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!-- 
+为第二辆车覆盖Gazebo插件配置，使用命名空间避免话题冲突
+-->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  
+  <!-- 覆盖diff_drive插件配置，使用robot2命名空间 -->
+  <gazebo>
+    <plugin name="gazebo_ros_control_robot2" filename="libgazebo_ros_diff_drive.so">
+      <robotNamespace>robot2</robotNamespace>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>robot2/odom</odometryFrame>
+      <odometrySource>world</odometrySource>
+      <publishOdomTF>true</publishOdomTF>
+      <robotBaseFrame>robot2/base_footprint</robotBaseFrame>
+      <publishWheelTF>false</publishWheelTF>
+      <publishTf>true</publishTf>
+      <publishWheelJointState>true</publishWheelJointState>
+      <legacyMode>false</legacyMode>
+      <update_rate>30</update_rate>
+      <leftJoint>left_rear_wheel_link_joint</leftJoint>
+      <rightJoint>right_rear_wheel_link_joint</rightJoint>
+      <wheelSeparation>0.28</wheelSeparation>
+      <wheelDiameter>0.07</wheelDiameter>
+      <wheelAcceleration>10</wheelAcceleration>
+      <wheelTorque>10</wheelTorque>
+      <rosDebugLevel>warn</rosDebugLevel>
+    </plugin>
+  </gazebo>
+  
+</robot>
+

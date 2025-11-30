@@ -20,14 +20,39 @@
     <node pkg="rl_line_following" type="rviz_path_planner.py" 
           name="rviz_path_planner" output="screen"/>
     
-    <!-- 启动路径跟踪器 -->
-    <node pkg="rl_line_following" type="path_tracker.py" 
-          name="path_tracker" output="screen"/>
+    <!-- 路径平滑器（可选） -->
+    <node pkg="rl_line_following" type="path_smoother.py" 
+          name="path_smoother" output="screen">
+        <param name="smoothing_factor" value="0.3"/>
+    </node>
+    
+    <!-- 选择路径跟踪器版本 -->
+    <arg name="use_enhanced_tracker" default="true"/>
+    
+    <group if="$(arg use_enhanced_tracker)">
+        <!-- 增强版路径跟踪器（带障碍物避障和速度规划） -->
+        <node pkg="rl_line_following" type="path_tracker_with_obstacle_avoidance.py" 
+              name="path_tracker" output="screen">
+            <param name="max_linear_speed" value="1.2"/>
+            <param name="max_angular_speed" value="2.5"/>
+            <param name="obstacle_threshold" value="0.5"/>
+            <param name="avoidance_angle" value="30.0"/>
+            <param name="max_acceleration" value="0.5"/>
+            <param name="max_deceleration" value="0.8"/>
+        </node>
+    </group>
+    
+    <group unless="$(arg use_enhanced_tracker)">
+        <!-- 标准路径跟踪器 -->
+        <node pkg="rl_line_following" type="path_tracker.py" 
+              name="path_tracker" output="screen"/>
+    </group>
+    
+    <!-- 轨迹记录器 -->
+    <node pkg="rl_line_following" type="trajectory_recorder.py" 
+          name="trajectory_recorder" output="screen"/>
     
     <!-- 添加第二辆小车（在第一辆车正后方1米） -->
-    <!-- 第一辆车位置: x=2, y=-0.7, Y=3.14 (180度，向后) -->
-    <!-- 第二辆车位置: x=1, y=-0.7 (正后方1米), Y=3.14 (相同朝向) -->
-    <!-- 注意：由于Gazebo插件配置，第二辆车可能需要使用不同的话题 -->
     <param name="robot2_description" command="$(find xacro)/xacro $(find robot_gazebo)/urdf/pav_s00/pav_s00.xacro robot_name:=robot2"/>
     
     <node name="spawn_robot2" pkg="gazebo_ros" type="spawn_model" output="screen"
@@ -46,28 +71,29 @@
         <remap from="joint_states" to="/robot2/joint_states"/>
     </node>
     
-    <!-- 启动跟随机器人控制器 -->
-    <!-- 话题配置：由于Gazebo插件可能没有使用命名空间，需要根据实际情况调整 -->
-    <!-- 启动后运行 ./scripts/check_robot_topics.sh 查看实际话题名称 -->
+    <!-- 跟随机器人控制器（预测性跟随） -->
     <node pkg="rl_line_following" type="follower_robot.py" 
           name="follower_robot" output="screen">
         <param name="follow_distance" value="1.0"/>
         <param name="max_linear_speed" value="1.2"/>
         <param name="max_angular_speed" value="2.5"/>
         <param name="leader_odom_topic" value="/odom"/>
-        <!-- 默认话题名称，如果不对请根据check_robot_topics.sh的输出修改 -->
         <param name="follower_odom_topic" value="/robot2/odom"/>
         <param name="follower_cmd_topic" value="/robot2/cmd_vel"/>
     </node>
     
-    <!-- 启动摄像头查看器（在OpenCV窗口中显示） -->
+    <!-- 启动摄像头查看器 -->
     <node pkg="rl_line_following" type="camera_viewer.py" 
           name="camera_viewer" output="screen">
         <remap from="/depth_camera/rgb/image_raw" to="/depth_camera/rgb/image_raw"/>
         <remap from="/depth_camera/depth/image_raw" to="/depth_camera/depth/image_raw"/>
     </node>
     
-    <!-- 设置日志级别，减少摄像头日志刷屏 -->
+    <!-- 可视化增强器 -->
+    <node pkg="rl_line_following" type="visualization_enhancer.py" 
+          name="visualization_enhancer" output="screen"/>
+    
+    <!-- 设置日志级别 -->
     <env name="ROSCONSOLE_CONFIG_FILE" 
          value="$(find rl_line_following)/config/rosconsole.conf"/>
     
